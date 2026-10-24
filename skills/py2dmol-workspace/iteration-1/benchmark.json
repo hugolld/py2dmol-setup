@@ -1,0 +1,343 @@
+{
+  "metadata": {
+    "skill_name": "py2dmol",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-08-17T11:47:52Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "A PNG deliverable exists and is at least 2000x2000 pixels (300-dpi render scale)",
+          "passed": true,
+          "evidence": "6mrr_rbd_ace2_cartoon.png is 2494x2494 (programmatic check)"
+        },
+        {
+          "text": "The PNG has an alpha channel (RGBA), i.e. transparent background",
+          "passed": true,
+          "evidence": "PNG color_type=6 RGBA (programmatic check)"
+        },
+        {
+          "text": "An SVG deliverable exists and is non-trivial (>10 KB of vector content)",
+          "passed": true,
+          "evidence": "6mrr_rbd_ace2_cartoon.svg is 121472 bytes (programmatic check)"
+        },
+        {
+          "text": "The figure depicts 6MRR as a secondary-structure cartoon (ribbon helices / arrowed strands), not a plain backbone line trace",
+          "passed": true,
+          "evidence": "Visual inspection: Richardson cartoon with flat wide helices, arrowed beta-strands, thin loops; render command used --style cartoon (default richardson preset). Same pipeline output visually verified during smoke testing."
+        },
+        {
+          "text": "The two chains (RBD and ACE2) are visibly distinguished by different colors",
+          "passed": true,
+          "evidence": "Visual inspection: ACE2 rendered blue, RBD red, clear claw-on-helix interface visible; color mode 'chain' in render command and confirmed in smoke-test render of identical spec."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "A PNG deliverable exists with its long side at least 2000 pixels (300-dpi render scale)",
+          "passed": true,
+          "evidence": "q5vsl9_plddt_pae.png, 4200x3000 (programmatic check)"
+        },
+        {
+          "text": "The image is wider than tall (PAE matrix panel rendered alongside the structure, aspect ratio > 1.3)",
+          "passed": true,
+          "evidence": "ratio=1.40 \u2014 structure left, PAE matrix right (programmatic + visual)"
+        },
+        {
+          "text": "The structure is colored by pLDDT confidence (blue-to-yellow/orange gradient over the chain), not by chain or rainbow position colors",
+          "passed": true,
+          "evidence": "Visual inspection: blue alpha-helical core domains, orange/yellow disordered N-term and internal linker \u2014 canonical pLDDT palette"
+        },
+        {
+          "text": "A PAE matrix heat-map panel is visible in the image",
+          "passed": true,
+          "evidence": "Visual inspection: PAE heat map with colorbar at right, dark intra-domain diagonal blocks"
+        },
+        {
+          "text": "interpretation.md exists and cites specific regions (residue numbers or domain/range descriptions) as high- vs low-confidence",
+          "passed": true,
+          "evidence": "5198 chars; four cores with residue ranges and pLDDT/PAE numbers pulled from the arrays embedded in the figure and cross-checked against official AF v6 PAE JSON (programmatic + read)"
+        },
+        {
+          "text": "interpretation.md identifies at least one low-confidence/disordered segment",
+          "passed": true,
+          "evidence": "1-66 and 335-421 called disordered, matching UniProt annotations; binding-induced folding hypothesis for 796-837 (programmatic check)"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "An MP4 deliverable exists, larger than 100 KB",
+          "passed": true,
+          "evidence": "md_traj_rainbow_cartoon.mp4, 0.51 MB (programmatic check)"
+        },
+        {
+          "text": "The MP4 video stream is H.264 with yuv420p pixel format (ffprobe codec_name=h264, pix_fmt=yuv420p)",
+          "passed": true,
+          "evidence": "ffprobe: codec=h264, pix_fmt=yuv420p, 1048x1048, 30 fps CFR, faststart (programmatic check)"
+        },
+        {
+          "text": "The MP4 has even width and height (yuv420p requirement satisfied in the file itself)",
+          "passed": true,
+          "evidence": "1048x1048 (programmatic check)"
+        },
+        {
+          "text": "The MP4 duration is between 4 and 20 seconds",
+          "passed": true,
+          "evidence": "8.57 s \u2014 close to the ~8 s target (programmatic check)"
+        },
+        {
+          "text": "The video actually animates: a frame extracted at 25% of the timeline differs from one at 75%",
+          "passed": true,
+          "evidence": "frame hashes differ (programmatic check); agent's visual check: elongated start -> bent end, all 40 frames played once"
+        },
+        {
+          "text": "A PNG deliverable exists at 2000+ pixels on its long side showing the peptide cartoon",
+          "passed": true,
+          "evidence": "md_traj_midframe_rainbow_300dpi.png, 2181x2181 RGBA, mid-trajectory MODEL 21/40 conformation (programmatic check + agent visual)"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "A PNG deliverable exists and is at least 2000x2000 pixels (300-dpi render scale)",
+          "passed": true,
+          "evidence": "6mrr_richardson_chain_300dpi.png, 2181x2181 (programmatic check)"
+        },
+        {
+          "text": "The PNG has an alpha channel (RGBA), i.e. transparent background",
+          "passed": true,
+          "evidence": "PNG color_type=6 RGBA (programmatic check)"
+        },
+        {
+          "text": "An SVG deliverable exists and is non-trivial (>10 KB of vector content)",
+          "passed": true,
+          "evidence": "6mrr_richardson_chain.svg, 121931 bytes (programmatic check)"
+        },
+        {
+          "text": "The figure depicts 6MRR as a secondary-structure cartoon (ribbon helices / arrowed strands), not a plain backbone line trace",
+          "passed": true,
+          "evidence": "Visual inspection: Richardson cartoon \u2014 flat wide helices, arrowed strands, inked outlines, pencil grain"
+        },
+        {
+          "text": "The two chains (RBD and ACE2) are visibly distinguished by different colors",
+          "passed": true,
+          "evidence": "Visual inspection: ACE2 teal vs RBD magenta, distinct at the interface"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "A PNG deliverable exists with its long side at least 2000 pixels (300-dpi render scale)",
+          "passed": true,
+          "evidence": "Q5VSL9_plddt_pae_300dpi.png, 3775x1869 (programmatic check)"
+        },
+        {
+          "text": "The image is wider than tall (PAE matrix panel rendered alongside the structure, aspect ratio > 1.3)",
+          "passed": true,
+          "evidence": "ratio=2.02 \u2014 structure panel left, PAE matrix right (programmatic + visual)"
+        },
+        {
+          "text": "The structure is colored by pLDDT confidence (blue-to-yellow/orange gradient over the chain), not by chain or rainbow position colors",
+          "passed": true,
+          "evidence": "Visual inspection: two blue high-confidence domains, orange/yellow disordered N-term and internal linker \u2014 canonical pLDDT palette"
+        },
+        {
+          "text": "A PAE matrix heat-map panel is visible in the image",
+          "passed": true,
+          "evidence": "Visual inspection: 837x837-style PAE heat map with 0-30 A colorbar at right, dark diagonal blocks within domains"
+        },
+        {
+          "text": "interpretation.md exists and cites specific regions (residue numbers or domain/range descriptions) as high- vs low-confidence",
+          "passed": true,
+          "evidence": "3697 chars; cites 73-318 and 422-785 as confident (~90-96 pLDDT), N-term 1-72 and 336-421 as disordered, cross-referenced with UniProt annotations and PDB 7K36 (programmatic + read)"
+        },
+        {
+          "text": "interpretation.md identifies at least one low-confidence/disordered segment",
+          "passed": true,
+          "evidence": "N-term 1-72 (~42 pLDDT) and internal ~336-421 (~33 pLDDT) explicitly called disordered (programmatic check)"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "An MP4 deliverable exists, larger than 100 KB",
+          "passed": true,
+          "evidence": "md_traj_rainbow_cartoon.mp4, 0.34 MB (programmatic check)"
+        },
+        {
+          "text": "The MP4 video stream is H.264 with yuv420p pixel format (ffprobe codec_name=h264, pix_fmt=yuv420p)",
+          "passed": true,
+          "evidence": "ffprobe: codec=h264, pix_fmt=yuv420p, 798x798, 30 fps CFR, faststart (programmatic check)"
+        },
+        {
+          "text": "The MP4 has even width and height (yuv420p requirement satisfied in the file itself)",
+          "passed": true,
+          "evidence": "798x798 (programmatic check)"
+        },
+        {
+          "text": "The MP4 duration is between 4 and 20 seconds",
+          "passed": true,
+          "evidence": "8.5 s (programmatic check)"
+        },
+        {
+          "text": "The video actually animates: a frame extracted at 25% of the timeline differs from one at 75%",
+          "passed": true,
+          "evidence": "frame hashes differ (programmatic check); agent verified smooth bend progression across all 40 frames"
+        },
+        {
+          "text": "A PNG deliverable exists at 2000+ pixels on its long side showing the peptide cartoon",
+          "passed": true,
+          "evidence": "md_traj_midframe_300dpi.png, 2494x2494 RGBA, mid-trajectory frame 20/40 (programmatic check + agent visual)"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.00",
+      "time_seconds": "+0.0",
+      "tokens": "+0"
+    }
+  },
+  "notes": "ANALYST PASS (iteration 1)\n\n1. Pass-rate axis saturated: all 17 assertions pass in both configurations. These tasks are within reach of a strong model with full tool access, so binary pass/fail does not separate the configs this round; cost and robustness do.\n\n2. The dominant baseline failure mode is pre-empted by the skill: 3/3 baseline runs first hit the PyPI stale-JS trap (PyPI wheels ship an old renderer with no saveImage/cartoon draw path even at version 1.7.0) and had to discover the git-pin, the _display_viewer->HTML->Playwright->renderer.saveImage pipeline, and the JS-bridge gotchas by trial and error (~10+ commands, most of the run spent on discovery; e0-base self-reported ~15 min). With-skill runs followed the SKILL.md quick-start nearly verbatim and spent their effort on the scientific task instead (e.g. e1-with cross-checked pLDDT/PAE numbers against official AF v6 data).\n\n3. The iteration's real yield is three concrete skill gaps found only by the with-skill runs: (a) saveImage exports only the structure canvas - PAE panels need --page; (b) --page captures include the interactive toolbar (needs a hide-chrome option); (c) recording duration is frame-driven (nFrames x max(50, animationSpeed) ms) and self-stops, so --seconds cannot set trajectory video length - a playback-speed flag is needed. All three are queued for iteration 2.\n\n4. Timing/token columns are zero: runs were interrupted mid-flight by an API rate limit and resumed, so telemetry was not captured. Command counts from commands.log are the honest cost proxy this round.\n\n5. Output cross-validation: both eval-1 runs independently identified the same confident/disordered regions of Q5VSL9 (matching UniProt disorder annotations), and both eval-2 videos verifiably animate - the deliverables themselves are sound."
+}

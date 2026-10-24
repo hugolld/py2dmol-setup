@@ -1,0 +1,22 @@
+[
+ {
+  "text": "PNG long side >= 2000 px",
+  "passed": true,
+  "evidence": "2800x2000"
+ },
+ {
+  "text": "Image wider than tall (PAE alongside, ratio > 1.3)",
+  "passed": true,
+  "evidence": "ratio=1.40"
+ },
+ {
+  "text": "interpretation.md cites specific regions",
+  "passed": true,
+  "evidence": "3141 chars"
+ },
+ {
+  "text": "interpretation.md identifies a low-confidence/disordered segment",
+  "passed": true,
+  "evidence": "keyword match"
+ }
+]

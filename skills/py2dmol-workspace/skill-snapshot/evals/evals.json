@@ -1,0 +1,49 @@
+{
+  "skill_name": "py2dmol",
+  "evals": [
+    {
+      "id": 0,
+      "name": "publication-still",
+      "prompt": "I'm preparing slides for a talk on host-pathogen interactions. Make me a publication-quality 2D figure of the SARS-CoV-2 RBD in complex with human ACE2 (PDB entry 6MRR): the hand-drawn Richardson-style cartoon look, each chain in a different color. I need a transparent 300-dpi PNG I can drop onto a slide, plus an SVG version of the same figure.",
+      "expected_output": "A transparent-background high-resolution PNG (>=2000px) of 6MRR rendered as a Richardson-style cartoon with per-chain colors, plus an SVG of the same view, produced via the skill's two-stage pipeline without user interaction.",
+      "files": [],
+      "assertions": [
+        "A PNG deliverable exists and is at least 2000x2000 pixels (300-dpi render scale)",
+        "The PNG has an alpha channel (RGBA), i.e. transparent background",
+        "An SVG deliverable exists and is non-trivial (>10 KB of vector content)",
+        "The figure depicts 6MRR as a secondary-structure cartoon (ribbon helices / arrowed strands), not a plain backbone line trace",
+        "The two chains (RBD and ACE2) are visibly distinguished by different colors"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "afdb-plddt-trust",
+      "prompt": "I have the AlphaFold model for UniProt Q5VSL9 and want to judge which regions to trust before designing experiments. Render it as a 2D cartoon colored by pLDDT with the PAE matrix shown alongside, exported as a 300-dpi PNG. Then tell me briefly which regions look confidently folded and which look like low-confidence/disordered segments.",
+      "expected_output": "A 300-dpi PNG showing the Q5VSL9 cartoon in pLDDT colors with the PAE matrix panel beside it, plus a short interpretation of high/low confidence regions consistent with the rendering.",
+      "files": [],
+      "assertions": [
+        "A PNG deliverable exists with its long side at least 2000 pixels (300-dpi render scale)",
+        "The image is wider than tall (PAE matrix panel rendered alongside the structure, aspect ratio > 1.3)",
+        "The structure is colored by pLDDT confidence (blue-to-yellow/orange gradient over the chain), not by chain or rainbow position colors",
+        "A PAE matrix heat-map panel is visible in the image",
+        "interpretation.md exists and cites specific regions (residue numbers or domain/range descriptions) as high- vs low-confidence",
+        "interpretation.md identifies at least one low-confidence/disordered segment"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "md-trajectory-movie",
+      "prompt": "Here's a multi-model MD trajectory of a helical peptide. Turn it into an ~8-second MP4 (H.264, has to play in PowerPoint) showing the trajectory playing as a rainbow-colored cartoon, and also export one 300-dpi PNG of a representative frame from the middle of the trajectory.",
+      "expected_output": "An MP4 (H.264/yuv420p, even dimensions, several seconds long, non-trivial size) animating the trajectory frames as a rainbow cartoon, plus a 300-dpi PNG mid-trajectory frame.",
+      "files": ["input/md_traj.pdb"],
+      "assertions": [
+        "An MP4 deliverable exists, larger than 100 KB",
+        "The MP4 video stream is H.264 with yuv420p pixel format (ffprobe codec_name=h264, pix_fmt=yuv420p)",
+        "The MP4 has even width and height (yuv420p requirement satisfied in the file itself)",
+        "The MP4 duration is between 4 and 20 seconds",
+        "The video actually animates: a frame extracted at 25% of the timeline differs from one at 75%",
+        "A PNG deliverable exists at 2000+ pixels on its long side showing the peptide cartoon"
+      ]
+    }
+  ]
+}

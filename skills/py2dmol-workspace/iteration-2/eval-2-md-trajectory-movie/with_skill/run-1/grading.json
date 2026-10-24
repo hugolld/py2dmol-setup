@@ -1,0 +1,37 @@
+{
+  "run_id": "eval-2-with_skill",
+  "expectations": [
+    {
+      "text": "An MP4 deliverable exists, larger than 100 KB",
+      "passed": true,
+      "evidence": "0.51 MB"
+    },
+    {
+      "text": "The MP4 video stream is H.264 with yuv420p pixel format (ffprobe codec_name=h264, pix_fmt=yuv420p)",
+      "passed": true,
+      "evidence": "codec=h264, pix_fmt=yuv420p"
+    },
+    {
+      "text": "The MP4 has even width and height (yuv420p requirement satisfied in the file itself)",
+      "passed": true,
+      "evidence": "1198x1198"
+    },
+    {
+      "text": "The MP4 duration is between 6 and 12 seconds (user asked ~8s; frame-driven duration must be lengthened via playback speed)",
+      "passed": true,
+      "evidence": "8.6s"
+    },
+    {
+      "text": "The video actually animates: a frame extracted at 25% of the timeline differs from one at 75%",
+      "passed": true,
+      "evidence": "frames differ"
+    },
+    {
+      "text": "A PNG deliverable exists at 2000+ pixels on its long side showing the peptide cartoon",
+      "passed": true,
+      "evidence": "2494x2494"
+    }
+  ],
+  "summary": {"pass_rate": 1.0, "passed": 6, "failed": 0, "total": 6},
+  "notes": "No workarounds needed: the new export.py's `--speed 200` flag stretched the 40-frame trajectory pass to ~8.6 s in a single call, hitting the ~8 s target directly. The representative mid-frame still was produced by awk-slicing MODEL 21 out of the multi-model PDB and re-rendering it. All assertions were verified programmatically (ffprobe codec/pix_fmt/dimensions/duration, frame-diff)."
+}

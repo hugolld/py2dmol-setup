@@ -1,0 +1,12 @@
+{
+  "eval_id": 0,
+  "eval_name": "bare-id-default-figure",
+  "prompt": "Make me a publication-quality 2D figure of the SARS-CoV-2 RBD in complex with human ACE2 (PDB entry 6MRR) for my talk slides. A transparent high-res PNG I can drop onto a slide, plus an SVG version of the same figure.",
+  "assertions": [
+    "A PNG deliverable exists and is at least 2000x2000 pixels (300-dpi render scale)",
+    "The PNG has an alpha channel (RGBA), i.e. transparent background",
+    "An SVG deliverable exists and is non-trivial (>10 KB of vector content)",
+    "Despite no style being requested, the figure is a secondary-structure cartoon (ribbon helices / arrowed strands), not a plain line trace \u2014 the publication default was applied",
+    "The two chains (RBD and ACE2) are visibly distinguished by different colors (default chain coloring)"
+  ]
+}

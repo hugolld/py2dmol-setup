@@ -1,0 +1,12 @@
+{
+  "viewer": {
+    "size": [800, 800],
+    "style": "tube",
+    "color": "chain",
+    "width": 2.5,
+    "outline": "full"
+  },
+  "load": [
+    { "type": "pdb", "id": "6MRR" }
+  ]
+}

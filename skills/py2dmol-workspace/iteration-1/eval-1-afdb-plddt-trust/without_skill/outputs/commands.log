@@ -1,0 +1,63 @@
+# commands.log — eval-1-afdb-plddt-trust (without_skill)
+# Every shell command run for this task, in order. Scripts were created with a
+# file-writing tool (not shell), so only the executions are listed here.
+
+# 1. scratch dir
+mkdir -p /tmp/q5vsl9-eval
+
+# 2. install/locate py2Dmol
+uv run --with py2Dmol python -c "import py2Dmol, os; print('version:', getattr(py2Dmol,'__version__','n/a')); print('file:', py2Dmol.__file__); print('pkg dir:', sorted(os.listdir(os.path.dirname(py2Dmol.__file__))))"
+
+# 3-5. inspect the frontend JS (saveImage + PAE canvas sizing)
+ls -la /Users/hugodong/Desktop/py2dmol-setup/.venv/lib/python3.12/site-packages/py2Dmol/resources/ && grep -o 'saveImage[^,}]*' .../viewer-mol.min.js | head -5
+grep -o 'saveImage(e{[^}]*' .../viewer-mol.min.js | head -3; echo ---; grep -o '.\{300\}saveImage(.\{0,80\}' .../viewer-mol.min.js | head -3
+grep -o 'createElement("canvas")[^;]*\|id="[^"]*"\|paeCanvas\|pae-canvas' .../viewer-pae.min.js | sort | uniq -c | sort -rn | head -20
+
+# 6. canvas IDs in the HTML template
+grep -o 'canvas[^>]*\|id="[^"]*"' .../py2Dmol/resources/viewer.html | sort -u | head -30
+
+# 7. first HTML-generation attempt (FAILED: PyPI py2Dmol 1.7.0 lacks the style= kwarg)
+cd /tmp/q5vsl9-eval && uv run gen_html.py
+
+# 8. version comparison repo venv vs PyPI
+/Users/hugodong/Desktop/py2dmol-setup/.venv/bin/python -c "import importlib.metadata as m; print('repo venv:', m.version('py2Dmol'))" && uv run --with py2Dmol python -c "import importlib.metadata as m; print('pypi latest:', m.version('py2Dmol'))"
+
+# 9. HTML generation with repo venv (GitHub-main py2Dmol; downloads AF-Q5VSL9.cif + PAE json)
+cd /tmp/q5vsl9-eval && /Users/hugodong/Desktop/py2dmol-setup/.venv/bin/python gen_html.py
+
+# 10. first Playwright capture (saveImage dpi=300 download + #paeCanvas toDataURL + composite)
+cd /tmp/q5vsl9-eval && uv run capture.py
+
+# 11. inspect PAE canvas sizing logic in the plugin
+grep -o '.\{80\}pae.\{0,6\}[Ss]ize.\{120\}' .../viewer-pae.min.js | head -10; echo ----; grep -o '.\{100\}width.\{0,60\}' .../viewer-pae.min.js | grep -i 'pae\|canvas' | head -10
+
+# 12-13. attempt container-widen resize (FAILED once on Download.size attr; rerun: canvas stayed 340px)
+cd /tmp/q5vsl9-eval && uv run capture2.py   # x2 after fixing the print
+
+# 14. probe renderer PAE internals + DOM around #paeCanvas
+cd /tmp/q5vsl9-eval && uv run probe.py
+
+# 15. force paeRenderer redraw at 600x600 (set canvas.width/height + .size, call render()) and rebuild composite
+cd /tmp/q5vsl9-eval && uv run capture3.py
+
+# 16. pLDDT segmentation + PAE stats + UniProt Q5VSL9 annotations
+cd /tmp/q5vsl9-eval && uv run analyze.py
+
+# 17. PAE inter/intra-region block analysis (+ attempted 7K36 lookup; gemmi import failed at the tail)
+cd /tmp/q5vsl9-eval && uv run analyze2.py
+
+# 18. RCSB: find the STRIP1 entity in 7K36
+cd /tmp/q5vsl9-eval && uv run --with requests python -c "...core/entry/7K36 + core/polymer_entity/7K36/1..11..."
+
+# 19. PDBe uniprot-mappings attempt (FAILED: response shape)
+cd /tmp/q5vsl9-eval && uv run --with requests python -c "...pdbe/api/mappings/uniprot/7K36..."
+
+# 20. download 7K36 cif, list chain residue ranges
+cd /tmp/q5vsl9-eval && curl -s https://files.rcsb.org/download/7K36.cif -o 7K36.cif && grep -A3 '_entity.pdbx_description' 7K36.cif | grep -i strip; uv run --with gemmi python -c "...chain ranges..."
+
+# 21. map 7K36 chains to entities (chain I = STRIP1, resolved 69-901 construct numbering)
+uv run --with gemmi python -c "..._struct_asym entity map..."
+
+# 22. deliverables
+mkdir -p ".../iteration-1/eval-1-afdb-plddt-trust/without_skill/outputs"
+cp /tmp/q5vsl9-eval/Q5VSL9_plddt_pae_300dpi.png ".../outputs/Q5VSL9_plddt_pae_300dpi.png"

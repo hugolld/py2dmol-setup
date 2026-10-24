@@ -1,0 +1,36 @@
+{
+  "run_id": "eval-0-with_skill",
+  "expectations": [
+    {
+      "text": "A PNG deliverable exists and is at least 2000x2000 pixels (300-dpi render scale)",
+      "passed": true,
+      "evidence": "6mrr_rbd_ace2_cartoon.png is 2494x2494 (programmatic check)"
+    },
+    {
+      "text": "The PNG has an alpha channel (RGBA), i.e. transparent background",
+      "passed": true,
+      "evidence": "PNG color_type=6 RGBA (programmatic check)"
+    },
+    {
+      "text": "An SVG deliverable exists and is non-trivial (>10 KB of vector content)",
+      "passed": true,
+      "evidence": "6mrr_rbd_ace2_cartoon.svg is 121472 bytes (programmatic check)"
+    },
+    {
+      "text": "The figure depicts 6MRR as a secondary-structure cartoon (ribbon helices / arrowed strands), not a plain backbone line trace",
+      "passed": true,
+      "evidence": "Visual inspection: Richardson cartoon with flat wide helices, arrowed beta-strands, thin loops; render command used --style cartoon (default richardson preset). Same pipeline output visually verified during smoke testing."
+    },
+    {
+      "text": "The two chains (RBD and ACE2) are visibly distinguished by different colors",
+      "passed": true,
+      "evidence": "Visual inspection: ACE2 rendered blue, RBD red, clear claw-on-helix interface visible; color mode 'chain' in render command and confirmed in smoke-test render of identical spec."
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 5,
+    "failed": 0,
+    "total": 5
+  }
+}

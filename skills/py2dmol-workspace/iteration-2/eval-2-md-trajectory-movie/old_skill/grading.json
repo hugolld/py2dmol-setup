@@ -1,0 +1,37 @@
+{
+  "run_id": "eval-2-old_skill",
+  "expectations": [
+    {
+      "text": "An MP4 deliverable exists, larger than 100 KB",
+      "passed": true,
+      "evidence": "0.33 MB"
+    },
+    {
+      "text": "The MP4 video stream is H.264 with yuv420p pixel format (ffprobe codec_name=h264, pix_fmt=yuv420p)",
+      "passed": true,
+      "evidence": "codec=h264, pix_fmt=yuv420p"
+    },
+    {
+      "text": "The MP4 has even width and height (yuv420p requirement satisfied in the file itself)",
+      "passed": true,
+      "evidence": "1198x1198"
+    },
+    {
+      "text": "The MP4 duration is between 6 and 12 seconds (user asked ~8s; frame-driven duration must be lengthened via playback speed)",
+      "passed": true,
+      "evidence": "8.2s"
+    },
+    {
+      "text": "The video actually animates: a frame extracted at 25% of the timeline differs from one at 75%",
+      "passed": true,
+      "evidence": "frames differ"
+    },
+    {
+      "text": "A PNG deliverable exists at 2000+ pixels on its long side showing the peptide cartoon",
+      "passed": true,
+      "evidence": "2494x2494"
+    }
+  ],
+  "summary": {"pass_rate": 1.0, "passed": 6, "failed": 0, "total": 6},
+  "notes": "Notable workaround: the old export.py's `--seconds 8` initially produced a 4.66 s video because the browser recorder auto-stops after one 40-frame pass, beating the timer — the runner had to hand-inject a script into viewer.html setting renderer.animationSpeed=185 and re-export with `--seconds 12` to land at 8.2 s. It also authored spec_movie.json/spec_still.json declaratively (old skill's only styling route) and self-verified with ffprobe, ffmpeg freezedetect, and extracted-frame comparison. 6/6, but only via HTML surgery that the new skill's --speed flag makes unnecessary."
+}

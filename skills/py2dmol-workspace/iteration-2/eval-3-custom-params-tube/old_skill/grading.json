@@ -1,0 +1,27 @@
+{
+  "run_id": "eval-3-old_skill",
+  "expectations": [
+    {
+      "text": "A PNG deliverable exists with its long side at least 2000 pixels and an alpha channel (RGBA)",
+      "passed": true,
+      "evidence": "2494x2494; color_type=6 (RGBA)"
+    },
+    {
+      "text": "The structure is rendered in tube style (continuous backbone trace), not cartoon ribbons/arrowed strands",
+      "passed": true,
+      "evidence": "Viewed 6mrr_tube_w2.5_outline.png: continuous rounded tube traces for both chains — smooth tube spirals at the helices, no flat ribbon coils and no strand arrowheads."
+    },
+    {
+      "text": "If a viewer HTML artifact is present in outputs, its embedded py2dmol config pins style \"tube\" and width 2.5 (the custom parameters flowed through)",
+      "passed": true,
+      "evidence": "style='tube'; width=2.5"
+    },
+    {
+      "text": "The requested custom look is honored rather than the publication default: strokes visibly heavier than a stock tube render, or the config width value as programmatic evidence",
+      "passed": true,
+      "evidence": "Programmatic: viewer HTML pins width=2.5. Visually corroborated: strokes in the PNG are bold heavy bands with the full outline treatment rendered around each trace — visibly heavier than a stock tube render."
+    }
+  ],
+  "summary": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4},
+  "notes": "The runner had to hand-author spec.json in an editor (viewer: tube, chain color, width 2.5, outline full) because the old skill only accepts styling through a declarative spec, not CLI flags. Output is fully equivalent to the with_skill run (same 2494x2494 RGBA render); the difference is ergonomics, not correctness."
+}

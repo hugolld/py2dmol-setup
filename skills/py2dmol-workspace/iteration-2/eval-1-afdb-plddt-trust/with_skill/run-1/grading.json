@@ -1,0 +1,37 @@
+{
+  "run_id": "eval-1-with_skill",
+  "expectations": [
+    {
+      "text": "A PNG deliverable exists with its long side at least 2000 pixels (300-dpi render scale)",
+      "passed": true,
+      "evidence": "2800x2000 (programmatic: \"2800x2000\")"
+    },
+    {
+      "text": "The image is wider than tall (PAE matrix panel rendered alongside the structure, aspect ratio > 1.3)",
+      "passed": true,
+      "evidence": "ratio=1.40"
+    },
+    {
+      "text": "The structure is colored by pLDDT confidence (blue-to-yellow/orange gradient over the chain), not by chain or rainbow position colors",
+      "passed": true,
+      "evidence": "Viewed q5vsl9_plddt_pae.png: the single chain runs from deep blue (well-ordered helical core) through green into yellow/orange terminal/loop segments — the AlphaFold pLDDT ramp; coloring tracks local order, not N-to-C position. Corroborated by `--color plddt` in commands.log."
+    },
+    {
+      "text": "A PAE matrix heat-map panel is visible in the image",
+      "passed": true,
+      "evidence": "Viewed q5vsl9_plddt_pae.png: the right ~40% of the canvas is a PAE heat map — a square panel with a dark low-error diagonal band and lighter off-diagonal blocks, clearly a separate panel from the structure."
+    },
+    {
+      "text": "interpretation.md exists and cites specific regions (residue numbers or domain/range descriptions) as high- vs low-confidence",
+      "passed": true,
+      "evidence": "3141 chars"
+    },
+    {
+      "text": "interpretation.md identifies at least one low-confidence/disordered segment",
+      "passed": true,
+      "evidence": "keyword match"
+    }
+  ],
+  "summary": {"pass_rate": 1.0, "passed": 6, "failed": 0, "total": 6},
+  "notes": "Single render.py call with `--color plddt --pae`, then export with `--page --dpi 300` captured the full two-panel layout (2800x2000, ratio 1.40) in one shot. The runner went beyond the assertions: pulled the AF confidence/PAE JSONs plus UniProt domain features and computed smoothed per-segment pLDDT and inter-domain PAE block means to ground interpretation.md in real numbers."
+}

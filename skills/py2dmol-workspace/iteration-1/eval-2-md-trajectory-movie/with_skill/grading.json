@@ -1,0 +1,42 @@
+{
+  "run_id": "eval-2-with_skill",
+  "expectations": [
+    {
+      "text": "An MP4 deliverable exists, larger than 100 KB",
+      "passed": true,
+      "evidence": "md_traj_rainbow_cartoon.mp4, 0.51 MB (programmatic check)"
+    },
+    {
+      "text": "The MP4 video stream is H.264 with yuv420p pixel format (ffprobe codec_name=h264, pix_fmt=yuv420p)",
+      "passed": true,
+      "evidence": "ffprobe: codec=h264, pix_fmt=yuv420p, 1048x1048, 30 fps CFR, faststart (programmatic check)"
+    },
+    {
+      "text": "The MP4 has even width and height (yuv420p requirement satisfied in the file itself)",
+      "passed": true,
+      "evidence": "1048x1048 (programmatic check)"
+    },
+    {
+      "text": "The MP4 duration is between 4 and 20 seconds",
+      "passed": true,
+      "evidence": "8.57 s \u2014 close to the ~8 s target (programmatic check)"
+    },
+    {
+      "text": "The video actually animates: a frame extracted at 25% of the timeline differs from one at 75%",
+      "passed": true,
+      "evidence": "frame hashes differ (programmatic check); agent's visual check: elongated start -> bent end, all 40 frames played once"
+    },
+    {
+      "text": "A PNG deliverable exists at 2000+ pixels on its long side showing the peptide cartoon",
+      "passed": true,
+      "evidence": "md_traj_midframe_rainbow_300dpi.png, 2181x2181 RGBA, mid-trajectory MODEL 21/40 conformation (programmatic check + agent visual)"
+    }
+  ],
+  "notes": "Agent hit a real skill gap: recording duration is frame-driven (nFrames x max(50, animationSpeed) ms, ~116 ms/frame default) and self-stops after the last frame, so --seconds only caps wall clock (40 frames gave 4.66 s, not 8 s). Worked around via the documented escape hatch (renderer.animationSpeed=200 through the same JS bridge). Improvement queued: add playback-speed control to export.py + document frame-driven duration semantics.",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  }
+}

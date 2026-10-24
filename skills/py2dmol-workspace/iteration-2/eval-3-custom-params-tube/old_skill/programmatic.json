@@ -1,0 +1,22 @@
+[
+ {
+  "text": "PNG long side >= 2000 px",
+  "passed": true,
+  "evidence": "2494x2494"
+ },
+ {
+  "text": "PNG has alpha channel (RGBA)",
+  "passed": true,
+  "evidence": "color_type=6"
+ },
+ {
+  "text": "Viewer HTML config pins style \"tube\"",
+  "passed": true,
+  "evidence": "style='tube'"
+ },
+ {
+  "text": "Viewer HTML config pins width 2.5 (custom param flowed through)",
+  "passed": true,
+  "evidence": "width=2.5"
+ }
+]

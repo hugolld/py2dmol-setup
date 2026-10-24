@@ -1,0 +1,11 @@
+{
+  "viewer": {
+    "size": [800, 800],
+    "style": "cartoon",
+    "preset": "ribbon",
+    "color": "rainbow"
+  },
+  "load": [
+    { "type": "file", "path": "/Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-2/eval-2-md-trajectory-movie/old_skill/outputs/md_traj_frame21.pdb", "name": "md_traj_frame21" }
+  ]
+}

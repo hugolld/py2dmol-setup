@@ -1,0 +1,42 @@
+{
+  "run_id": "eval-1-with_skill",
+  "expectations": [
+    {
+      "text": "A PNG deliverable exists with its long side at least 2000 pixels (300-dpi render scale)",
+      "passed": true,
+      "evidence": "q5vsl9_plddt_pae.png, 4200x3000 (programmatic check)"
+    },
+    {
+      "text": "The image is wider than tall (PAE matrix panel rendered alongside the structure, aspect ratio > 1.3)",
+      "passed": true,
+      "evidence": "ratio=1.40 \u2014 structure left, PAE matrix right (programmatic + visual)"
+    },
+    {
+      "text": "The structure is colored by pLDDT confidence (blue-to-yellow/orange gradient over the chain), not by chain or rainbow position colors",
+      "passed": true,
+      "evidence": "Visual inspection: blue alpha-helical core domains, orange/yellow disordered N-term and internal linker \u2014 canonical pLDDT palette"
+    },
+    {
+      "text": "A PAE matrix heat-map panel is visible in the image",
+      "passed": true,
+      "evidence": "Visual inspection: PAE heat map with colorbar at right, dark intra-domain diagonal blocks"
+    },
+    {
+      "text": "interpretation.md exists and cites specific regions (residue numbers or domain/range descriptions) as high- vs low-confidence",
+      "passed": true,
+      "evidence": "5198 chars; four cores with residue ranges and pLDDT/PAE numbers pulled from the arrays embedded in the figure and cross-checked against official AF v6 PAE JSON (programmatic + read)"
+    },
+    {
+      "text": "interpretation.md identifies at least one low-confidence/disordered segment",
+      "passed": true,
+      "evidence": "1-66 and 335-421 called disordered, matching UniProt annotations; binding-induced folding hypothesis for 796-837 (programmatic check)"
+    }
+  ],
+  "notes": "Hit a documentation gap: default saveImage export captures only the structure canvas \u2014 the PAE panel is a separate DOM element, so PAE figures need export.py --page. Agent worked around it (plus injected CSS to hide toolbar buttons in the page capture) and suggested a one-line pointer in SKILL.md's Exporting section. Both queued as improvements.",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  }
+}

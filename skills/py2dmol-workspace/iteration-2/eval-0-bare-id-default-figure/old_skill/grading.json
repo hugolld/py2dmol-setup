@@ -1,0 +1,32 @@
+{
+  "run_id": "eval-0-old_skill",
+  "expectations": [
+    {
+      "text": "A PNG deliverable exists and is at least 2000x2000 pixels (300-dpi render scale)",
+      "passed": true,
+      "evidence": "6mrr_rbd_ace2.png measured 2494x2494 (programmatic: \"2494x2494\")"
+    },
+    {
+      "text": "The PNG has an alpha channel (RGBA), i.e. transparent background",
+      "passed": true,
+      "evidence": "color_type=6 (RGBA)"
+    },
+    {
+      "text": "An SVG deliverable exists and is non-trivial (>10 KB of vector content)",
+      "passed": true,
+      "evidence": "121472 bytes"
+    },
+    {
+      "text": "Despite no style being requested, the figure is a secondary-structure cartoon (ribbon helices / arrowed strands), not a plain line trace — the publication default was applied",
+      "passed": true,
+      "evidence": "Viewed 6mrr_rbd_ace2.png: flat ribbon helix coils (ACE2 bundle) and arrowed beta strands (RBD sheet) — a cartoon, not a line trace. Caveat: commands.log shows the runner explicitly passed `--style cartoon --color chain`, so the cartoon came from an explicit flag rather than a skill default (the old skill has none); the visible outcome passes, the mechanism does not demonstrate a default."
+    },
+    {
+      "text": "The two chains (RBD and ACE2) are visibly distinguished by different colors (default chain coloring)",
+      "passed": true,
+      "evidence": "Viewed 6mrr_rbd_ace2.png: RBD tan/sandy yellow vs ACE2 steel blue — two clearly distinct chain colors (requested explicitly via `--color chain`)."
+    }
+  ],
+  "summary": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5},
+  "notes": "The old skill has no publication default, so the runner compensated by explicitly passing `--style cartoon --color chain --size 800 800`; the output is visually identical to the with_skill render (same 2494x2494, same 121472-byte SVG). Critique: because the runner pinned the flags, the 'default applied' assertion passes on outcome only and does not discriminate the two skill versions — a runner that trusted native defaults would have rendered py2Dmol's stock tube."
+}

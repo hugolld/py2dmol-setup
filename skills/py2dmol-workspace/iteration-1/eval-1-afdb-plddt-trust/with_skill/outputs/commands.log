@@ -1,0 +1,100 @@
+# eval-1-afdb-plddt-trust (with_skill) — every shell command run
+# Skill scripts live at /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/ (abbrev. SKILL below)
+# Scratch dir: /tmp/afdb-q5vsl9   Outputs: .../eval-1-afdb-plddt-trust/with_skill/outputs/
+
+# 1. setup
+mkdir -p /tmp/afdb-q5vsl9
+mkdir -p "/Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-1/eval-1-afdb-plddt-trust/with_skill/outputs"
+ls /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/
+
+# 2. render (per SKILL.md Quick start #2)
+cd /tmp/afdb-q5vsl9 && uv run SKILL/render.py --afdb Q5VSL9 --color plddt --pae --size 700 700 -o viewer.html
+
+# 3. first export attempt (saveImage path)
+cd /tmp/afdb-q5vsl9 && uv run SKILL/export.py viewer.html -o q5vsl9_plddt_pae.png
+# -> 2181x2181 structure-only PNG: PAE panel is a separate DOM element, not captured by saveImage
+
+# 4. verify PNG
+cd /tmp/afdb-q5vsl9 && file q5vsl9_plddt_pae.png && sips -g hasAlpha -g pixelWidth -g pixelHeight q5vsl9_plddt_pae.png
+
+# 5. inspect HTML for PAE handling
+cd /tmp/afdb-q5vsl9 && grep -o 'pae[A-Za-z_-]*' viewer.html | sort | uniq -c | sort -rn | head -20
+cd /tmp/afdb-q5vsl9 && grep -c 'predicted_aligned_error\|pae_data\|"pae"' viewer.html
+cd /tmp/afdb-q5vsl9 && ls -la viewer.html
+cd /tmp/afdb-q5vsl9 && sips -c 2181 1090 --cropOffset 0 1091 q5vsl9_plddt_pae.png --out right_half.png && sips -Z 1000 right_half.png
+cd /tmp/afdb-q5vsl9 && grep -o 'paeContainer[^;]\{0,200\}' viewer.html | head -5
+cd /tmp/afdb-q5vsl9 && grep -o 'pae_loaded[^;]\{0,150\}' viewer.html | head -5
+cd /tmp/afdb-q5vsl9 && grep -o '<div[^>]*id="[^"]*pae[^"]*"[^>]*>' viewer.html | head -10
+cd /tmp/afdb-q5vsl9 && grep -o 'style\.display="[^"]*"' viewer.html | sort | uniq -c
+cd /tmp/afdb-q5vsl9 && grep -o '.\{120\}paeContainer=i,i.style.display="none"' viewer.html
+cd /tmp/afdb-q5vsl9 && grep -io '.\{80\}>PAE<.\{80\}' viewer.html | head -3
+cd /tmp/afdb-q5vsl9 && grep -o 'title="[^"]*PAE[^"]*"\|PAE[^<]\{0,40\}button\|button[^<]\{0,40\}PAE' viewer.html | head -5
+cd /tmp/afdb-q5vsl9 && grep -o '.\{150\}style\.display="flex".\{100\}' viewer.html
+cd /tmp/afdb-q5vsl9 && grep -o '.\{150\}style\.display="block".\{100\}' viewer.html
+cd /tmp/afdb-q5vsl9 && grep -o 'paeButton[^;]\{0,120\}' viewer.html | head -8
+cd /tmp/afdb-q5vsl9 && grep -o '.\{60\}paeContainer.\{200\}' viewer.html | head -20
+# -> PAE.updateVisibility() sets paeContainer display:flex when data present (panel IS shown on the page)
+
+# 6. python (heredoc) to dump updateVisibility source -> confirmed visibility logic
+cd /tmp/afdb-q5vsl9 && python3   # heredoc: print html around each 'updateVisibility' occurrence
+
+# 7. check export.py --page support
+cd SKILL/scripts && grep -n 'page\|scale\|screenshot' export.py | head -30
+cd SKILL/scripts && grep -n 'add_argument\|def main' render.py | head -25
+cd SKILL/scripts && grep -n 'button\|toolbar\|controls' render.py | head
+
+# 8. page-mode export (includes PAE panel) — buttons visible, superseded
+cd /tmp/afdb-q5vsl9 && uv run SKILL/export.py viewer.html -o q5vsl9_plddt_pae.png --page --scale 3
+cd /tmp/afdb-q5vsl9 && sips -Z 1600 q5vsl9_plddt_pae.png --out preview_small.png
+
+# 9. find staticData + toolbar markup
+cd /tmp/afdb-q5vsl9 && grep -o '.\{100\}Save Image.\{100\}' viewer.html | head -3
+cd /tmp/afdb-q5vsl9 && grep -o 'id="[a-zA-Z]*Button[a-zA-Z]*"\|class="[^"]*toolbar[^"]*"' viewer.html | sort -u | head
+
+# 10. hide toolbar in a scratch copy (skill dir untouched), re-export -> FINAL PNG
+cd /tmp/afdb-q5vsl9 && python3   # heredoc: inject <style>button,select{display:none!important}</style> before </head> -> viewer_clean.html
+cd /tmp/afdb-q5vsl9 && uv run SKILL/export.py viewer_clean.html -o q5vsl9_plddt_pae.png --page --scale 3
+cd /tmp/afdb-q5vsl9 && sips -Z 1500 q5vsl9_plddt_pae.png --out preview2.png
+
+# 11. pixel-level verification of final PNG (layout, PAE panel geometry, color census)
+cd /tmp/afdb-q5vsl9 && uv run --with pillow python ...          # failed: numpy missing
+cd /tmp/afdb-q5vsl9 && uv run --with pillow --with numpy python  # heredoc: alpha bbox, half censuses
+cd /tmp/afdb-q5vsl9 && uv run --with pillow --with numpy python  # heredoc: right-panel color histogram
+cd /tmp/afdb-q5vsl9 && uv run --with pillow --with numpy python  # heredoc: dense-block geometry (899x899 PAE square + colorbar)
+
+# 12. extract embedded pLDDT/PAE arrays from the rendered artifact
+cd /tmp/afdb-q5vsl9 && uv run --with numpy python   # heredoc: regex <script id="static-data-py2dmol_export">, json.loads -> staticData.json
+cd /tmp/afdb-q5vsl9 && python3                      # heredoc: print script prefix to fix JSON slice
+# -> frames[0]: coords 837x3, plddts[837], pae[700569 = 837^2], residue_numbers 1..837
+
+# 13. segment/domain analysis
+cd /tmp/afdb-q5vsl9 && uv run --with numpy python   # heredoc: pLDDT runs (>=90 / <70), PAE rigidity profile; saved plddt.npy pae.npy profs.npy
+
+# 14. cross-checks against public data
+cd /tmp/afdb-q5vsl9 && curl -sL -o pae_official.json "https://alphafold.ebi.ac.uk/files/AF-Q5VSL9-F1-pae_v4.json"   # 404 NoSuchKey
+cd /tmp/afdb-q5vsl9 && curl -sL -o uniprot.json "https://rest.uniprot.org/uniprotkb/Q5VSL9.json"
+cd /tmp/afdb-q5vsl9 && python3 -c "...parse uniprot.json: STRIP1, 837 aa..."
+cd /tmp/afdb-q5vsl9 && curl -sL "https://alphafold.ebi.ac.uk/api/uniprot/Q5VSL9"                                    # 404
+cd /tmp/afdb-q5vsl9 && curl -sL "https://alphafold.ebi.ac.uk/api/prediction/Q5VSL9" | python3 -c "...file urls..."   # v6 cif
+cd /tmp/afdb-q5vsl9 && curl -sL -o pae_official.json "https://alphafold.ebi.ac.uk/files/AF-Q5VSL9-F1-pae_v6.json"   # 404
+cd /tmp/afdb-q5vsl9 && curl -sL -o af_v6.cif "https://alphafold.ebi.ac.uk/files/AF-Q5VSL9-F1-model_v6.cif" && grep -c 'ma_qa_metric_local_pairing' af_v6.cif   # 0
+find ~/.cache/uv -maxdepth 4 -iname '*py2dmol*' -o -maxdepth 4 -iname '*py2Dmol*' ; ls ~/.cache/uv/git-v0/checkouts
+CO=~/.cache/uv/git-v0/checkouts/0bf40e23786adb76/4a23973 ; grep -n 'pae' $CO/py2Dmol/viewer.py | grep -i 'url\|http\|fetch\|json'
+sed -n '2820,2850p' $CO/py2Dmol/viewer.py
+cd /tmp/afdb-q5vsl9 && curl -sL -o pae_official.json "https://alphafold.ebi.ac.uk/files/AF-Q5VSL9-F1-predicted_aligned_error_v6.json"   # OK (Å-scale PAE)
+cd /tmp/afdb-q5vsl9 && uv run --with numpy python   # heredoc: embedded == official x8 exactly (py2Dmol stores 1/8 Å)
+
+# 15. block interaction table + UniProt features + helix content
+cd /tmp/afdb-q5vsl9 && uv run --with numpy python   # heredoc: per-block pLDDT / intra-PAE / inter-PAE table; saved pae_A.npy
+python3 -c "...print UniProt Domain/Region/Motif features..."
+cd /tmp/afdb-q5vsl9 && uv run --with numpy python   # heredoc: CA i,i+4 helix estimator per block
+
+# 16. verify toolbar removal by differencing button-ful vs clean page exports
+cd /tmp/afdb-q5vsl9 && uv run --with pillow --with numpy python   # heredoc: diff preview_small vs preview2 (invalid: different scales)
+cd /tmp/afdb-q5vsl9 && uv run SKILL/export.py viewer.html -o with_buttons.png --page --scale 3
+cd /tmp/afdb-q5vsl9 && uv run --with pillow --with numpy python   # heredoc: proper diff -> 0.43% px confined to x3108-3647,y66-260 (toolbar only)
+
+# 17. deliverables
+cp /tmp/afdb-q5vsl9/q5vsl9_plddt_pae.png   OUTDIR/q5vsl9_plddt_pae.png
+cp /tmp/afdb-q5vsl9/viewer_clean.html      OUTDIR/q5vsl9_plddt_pae_viewer.html
+# interpretation.md and commands.log written directly into OUTDIR

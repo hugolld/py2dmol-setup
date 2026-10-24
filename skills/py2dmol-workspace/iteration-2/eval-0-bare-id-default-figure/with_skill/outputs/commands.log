@@ -1,0 +1,4 @@
+mkdir -p /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-2/eval-0-bare-id-default-figure/with_skill/outputs
+uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/render.py --pdb 6MRR -o viewer.html
+uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/export.py viewer.html -o 6mrr.png
+uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/export.py viewer.html -o 6mrr.svg

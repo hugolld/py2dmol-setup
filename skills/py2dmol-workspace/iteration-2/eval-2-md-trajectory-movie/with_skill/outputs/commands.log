@@ -1,0 +1,9 @@
+grep -c "^MODEL" /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb; grep -c "^ENDMDL" /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb; head -5 /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb
+mkdir -p /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-2/eval-2-md-trajectory-movie/with_skill/outputs
+cd /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-2/eval-2-md-trajectory-movie/with_skill/outputs && uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/render.py --file /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb --style cartoon --color rainbow --autoplay -o viewer_traj.html
+uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/export.py viewer_traj.html -o md_traj_rainbow_cartoon.mp4 --speed 200
+awk '/^MODEL/ { m=$2 } m==21, /^ENDMDL/' /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb > mid_frame.pdb
+uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/render.py --file mid_frame.pdb --style cartoon --color rainbow -o viewer_midframe.html
+uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/export.py viewer_midframe.html -o md_traj_midframe_300dpi.png --dpi 300
+ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,pix_fmt,width,height,nb_frames -show_entries format=duration -of default=noprint_wrappers=1 md_traj_rainbow_cartoon.mp4
+ffprobe -v trace md_traj_rainbow_cartoon.mp4 2>&1 | grep -m2 -E "type:'(moov|mdat)'"

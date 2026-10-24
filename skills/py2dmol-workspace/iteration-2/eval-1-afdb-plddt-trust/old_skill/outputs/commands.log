@@ -1,0 +1,9 @@
+mkdir -p /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-2/eval-1-afdb-plddt-trust/old_skill/outputs
+uv run .../skill-snapshot/scripts/render.py --help
+uv run .../skill-snapshot/scripts/render.py --afdb Q5VSL9 --style cartoon --color plddt --pae --size 700 700 -o viewer.html
+uv run .../skill-snapshot/scripts/export.py viewer.html -o q5vsl9_plddt_pae.png --dpi 300
+python3 - <<'EOF' (probe viewer.html for embedded pLDDT/PAE data; extracted per-residue pLDDT segments)
+curl -sL -o AF-Q5VSL9-F1-model_v4.cif https://alphafold.ebi.ac.uk/files/AF-Q5VSL9-F1-model_v4.cif   # 404 stub, deleted
+curl -sL -o AF-Q5VSL9-F1-pae_v4.json https://alphafold.ebi.ac.uk/files/AF-Q5VSL9-F1-predicted_aligned_error_v4.json   # 404 stub, deleted
+python3 - <<'EOF' (compute pLDDT confidence segments + PAE block means from render.py's cached AF-Q5VSL9.cif / AF-Q5VSL9-pae.json)
+rm -f AF-Q5VSL9-F1-model_v4.cif AF-Q5VSL9-F1-pae_v4.json confidence.json pae_row_means.json

@@ -1,0 +1,32 @@
+[
+ {
+  "text": "MP4 exists, >100 KB",
+  "passed": true,
+  "evidence": "0.33 MB"
+ },
+ {
+  "text": "MP4 is H.264 yuv420p",
+  "passed": true,
+  "evidence": "codec=h264, pix_fmt=yuv420p"
+ },
+ {
+  "text": "MP4 even width/height",
+  "passed": true,
+  "evidence": "1198x1198"
+ },
+ {
+  "text": "MP4 duration 6-12 s (~8 s requested; requires playback-speed control)",
+  "passed": true,
+  "evidence": "8.2s"
+ },
+ {
+  "text": "Video animates (25% frame differs from 75% frame)",
+  "passed": true,
+  "evidence": "frames differ"
+ },
+ {
+  "text": "PNG long side >= 2000 px",
+  "passed": true,
+  "evidence": "2494x2494"
+ }
+]

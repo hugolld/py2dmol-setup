@@ -1,0 +1,16 @@
+[project]
+name = "py2dmol-setup"
+version = "0.1.0"
+description = "Development environment for the py2dmol agent skill (skill scripts themselves are PEP 723 standalone)"
+requires-python = ">=3.11"
+dependencies = [
+    # PyPI wheels ship stale JS: 1.6.5 lacks cartoon style entirely; 1.7.0
+    # accepts style/preset kwargs but bundles the old renderer (no saveImage
+    # export). Pin the git commit that matches the skill's pinned version.
+    "py2Dmol @ git+https://github.com/sokrypton/py2Dmol.git@4a2397313eec1a7606093df19515158bd8ca939c",
+    "playwright",
+    "imageio-ffmpeg",
+]
+
+[dependency-groups]
+dev = ["pytest"]

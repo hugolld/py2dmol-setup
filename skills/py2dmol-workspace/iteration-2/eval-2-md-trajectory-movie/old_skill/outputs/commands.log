@@ -1,0 +1,35 @@
+# eval-2 MD trajectory movie — shell commands (run from .../old_skill/outputs; SKILL=../../../skill-snapshot)
+mkdir -p /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-2/eval-2-md-trajectory-movie/old_skill/outputs
+awk '/^MODEL /{m++} m==21' /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb > md_traj_frame21.pdb && echo END >> md_traj_frame21.pdb
+uv run $SKILL/scripts/render.py spec_movie.json -o viewer_movie.html
+uv run $SKILL/scripts/render.py spec_still.json -o viewer_still.html
+uv run $SKILL/scripts/export.py viewer_movie.html -o md_traj_rainbow.mp4 --seconds 8
+# (superseded: came out 4.66 s — the recorder auto-stops after one 40-frame pass at ~116 ms/frame, beating the 8 s timer)
+python3 - <<'EOF'
+src = open("viewer_movie.html").read()
+inject = """<script>
+(function () {
+  function setSpeed() {
+    var v = window.py2dmol_viewers && window.py2dmol_viewers["py2dmol_export"];
+    if (v && v.renderer && "animationSpeed" in v.renderer) {
+      v.renderer.animationSpeed = 185;  // 40 frames x (~185+17ms) ~= 8 s pass
+      return true;
+    }
+    return false;
+  }
+  if (!setSpeed()) {
+    var iv = setInterval(function () { if (setSpeed()) clearInterval(iv); }, 25);
+  }
+})();
+</script>
+"""
+open("viewer_movie_slow.html", "w").write(src.replace("</body>", inject + "</body>"))
+EOF
+uv run $SKILL/scripts/export.py viewer_movie_slow.html -o md_traj_rainbow.mp4 --seconds 12
+uv run $SKILL/scripts/export.py viewer_still.html -o md_traj_frame21_rainbow.png --dpi 300
+# verification (not producing artifacts)
+ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,pix_fmt,width,height,nb_frames -show_entries format=duration -of default=noprint_wrappers=1 md_traj_rainbow.mp4
+ffprobe -v error -show_entries stream=pix_fmt -of default=noprint_wrappers=1 md_traj_frame21_rainbow.png
+ffmpeg -v info -i md_traj_rainbow.mp4 -vf "freezedetect=n=0.001:d=1" -f null - 2>&1 | grep -i freeze
+ffmpeg -y -v error -i md_traj_rainbow.mp4 -vf "select='eq(n\,5)+eq(n\,35)',scale=420:420" -fps_mode vfr check_%d.png   # visual frame inspection (deleted after)
+rm -f check_1.png check_2.png check_still.png

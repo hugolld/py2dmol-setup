@@ -1,0 +1,68 @@
+# eval-2 MD-trajectory movie — every shell command run (chronological)
+# Skill: skills/py2dmol (SKILL.md workflow: spec -> render.py -> export.py)
+# Scratch dir: /tmp/py2dmol-eval2. File writes done via editor tool are noted
+# as [file] lines for reproducibility; everything else is a shell command.
+
+# 1. inspect input trajectory
+grep -c "^MODEL" /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb; grep -m2 "^TITLE" /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb; grep -m1 "^ATOM" /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb; ls -la /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/
+cat /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/make_md_traj.py; echo ---; grep -o "RESI\|GLY\|ALA" /dev/null; awk '/^MODEL/{m++} END{print "models:", m}' /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb; awk '/^MODEL 1$/,/^ENDMDL/' /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb | grep -c "^ATOM"
+
+# 2. inspect skill scripts
+ls /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/ && wc -l /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/*.py
+
+# 3. workspace setup
+mkdir -p /tmp/py2dmol-eval2 /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-1/eval-2-md-trajectory-movie/with_skill/outputs && echo ok
+# [file] wrote /tmp/py2dmol-eval2/spec_movie.json     (viewer: cartoon/richardson, rainbow, autoplay, 700x700; load md_traj.pdb)
+# [file] wrote /tmp/py2dmol-eval2/extract_mid_frame.py (pull MODEL 21 of 40 into single-model PDB)
+
+# 4. render movie viewer + extract mid frame
+cd /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol && uv run scripts/render.py /tmp/py2dmol-eval2/spec_movie.json -o /tmp/py2dmol-eval2/viewer_movie.html 2>&1 | tail -20
+uv run /tmp/py2dmol-eval2/extract_mid_frame.py
+
+# 5. first MP4 attempt (skill default path)
+cd /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol && uv run scripts/export.py /tmp/py2dmol-eval2/viewer_movie.html -o /tmp/py2dmol-eval2/md_traj_rainbow.mp4 --seconds 8 2>&1 | tail -10
+
+# 6. still: render mid-frame viewer, export 300-dpi PNG
+# [file] wrote /tmp/py2dmol-eval2/spec_still.json (same style/color, no autoplay)
+cd /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol && uv run scripts/render.py /tmp/py2dmol-eval2/spec_still.json -o /tmp/py2dmol-eval2/viewer_still.html 2>&1 | tail -5 && uv run scripts/export.py /tmp/py2dmol-eval2/viewer_still.html -o /tmp/py2dmol-eval2/mid_frame_rainbow.png --dpi 300 2>&1 | tail -5
+
+# 7. verify MP4 -> found problem: only 4.66 s (recording is frame-driven,
+#    40 frames x ~116 ms default animationSpeed; --seconds only caps wall clock)
+FF=$(which ffmpeg || python3 -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())"); "$FF" -i /tmp/py2dmol-eval2/md_traj_rainbow.mp4 2>&1 | grep -E "Input|Duration|Stream"
+ffprobe -v error -show_entries format=duration -of csv=p=0 /tmp/py2dmol-eval2/md_traj_rainbow.webm
+ffmpeg -i /tmp/py2dmol-eval2/md_traj_rainbow.webm -f null - 2>&1 | grep -E "Duration|time=" | tail -3
+
+# 8. dig into embedded renderer JS for a playback-speed/loop knob
+grep -o '"loop[^,}]*' /tmp/py2dmol-eval2/viewer_movie.html | head -5; grep -o 'loop[A-Za-z]*' /tmp/py2dmol-eval2/viewer_movie.html | sort | uniq -c | head
+grep -o '.\{80\}loopFrame.\{80\}' /tmp/py2dmol-eval2/viewer_movie.html | head -3
+grep -o '.\{40\}loops.\{140\}' /tmp/py2dmol-eval2/viewer_movie.html | head -3
+grep -o '.\{120\}autoplay.\{200\}' /tmp/py2dmol-eval2/viewer_movie.html | head -4
+grep -o 'frameInterval[^,;}]*' /tmp/py2dmol-eval2/viewer_movie.html | head
+grep -o 'setFrame\|nextFrame\|gotoFrame\|playFrom\|\.play(\|pauseFrame\|advanceFrame' /tmp/py2dmol-eval2/viewer_movie.html | sort | uniq -c
+grep -o 'setFrame(.\{250\}' /tmp/py2dmol-eval2/viewer_movie.html | head -4
+grep -o '.\{150\}requestAnimationFrame.\{250\}' /tmp/py2dmol-eval2/viewer_movie.html | head -6
+grep -o 'animationSpeed[^,;)}]\{0,60\}' /tmp/py2dmol-eval2/viewer_movie.html | sort | uniq -c
+grep -o '_cycleSpeed.\{300\}' /tmp/py2dmol-eval2/viewer_movie.html | head -2
+grep -o 'recordingEndFrame[^;]\{0,80\}' /tmp/py2dmol-eval2/viewer_movie.html | head -4
+# -> renderer.animationSpeed = ms/frame; recording = N frames x max(50, animationSpeed), self-stops
+
+# 9. escape-hatch driver: same JS bridge as export.py but sets animationSpeed=200
+#    (40 frames x 200 ms = 8.0 s), records at device_scale_factor=2 like export.py
+# [file] wrote /tmp/py2dmol-eval2/record_slow.py (PEP 723, playwright)
+cd /tmp/py2dmol-eval2 && uv run record_slow.py viewer_movie.html md_traj_rainbow_8s.webm 200 && ffmpeg -y -i md_traj_rainbow_8s.webm -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2,fps=30" -c:v libx264 -pix_fmt yuv420p -crf 18 -movflags +faststart md_traj_rainbow_8s.mp4 && ffprobe -v error -show_entries format=duration -of csv=p=0 md_traj_rainbow_8s.mp4 && ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,pix_fmt,width,height,avg_frame_rate -of csv=p=0 md_traj_rainbow_8s.mp4
+# (first pass recorded 698x698 -> edited record_slow.py to device_scale_factor=2, re-ran the same command)
+
+# 10. visual verification of movie + PNG
+cd /tmp/py2dmol-eval2 && ffmpeg -y -v error -i md_traj_rainbow_8s.mp4 -vf "select='eq(n\,30)+eq(n\,128)+eq(n\,226)',scale=400:-1" -fps_mode vfr check_%d.png && python3 -c "
+import struct
+with open('mid_frame_rainbow.png','rb') as f: d=f.read()
+w,h=struct.unpack('>II', d[16:24]); ct=d[25]
+print(f'PNG {w}x{h}, color type {ct} (6 = RGBA -> transparent)')"
+# (one earlier attempt used -vsync vfr; this ffmpeg build dropped that flag -> rerun with -fps_mode vfr)
+# viewed check_1/check_3 (movie start: elongated, end: bent) and mid_frame_rainbow.png (bent mid conformation)
+
+# 11. deliver
+OUT=/Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-1/eval-2-md-trajectory-movie/with_skill/outputs
+cp /tmp/py2dmol-eval2/md_traj_rainbow_8s.mp4 "$OUT/md_traj_rainbow_cartoon.mp4"
+cp /tmp/py2dmol-eval2/mid_frame_rainbow.png "$OUT/md_traj_midframe_rainbow_300dpi.png"
+ls -la "$OUT" && ffprobe -v error -show_entries format=duration -of csv=p=0 "$OUT/md_traj_rainbow_cartoon.mp4"

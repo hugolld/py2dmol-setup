@@ -1,0 +1,42 @@
+{
+  "run_id": "eval-2-without_skill",
+  "expectations": [
+    {
+      "text": "An MP4 deliverable exists, larger than 100 KB",
+      "passed": true,
+      "evidence": "md_traj_rainbow_cartoon.mp4, 0.34 MB (programmatic check)"
+    },
+    {
+      "text": "The MP4 video stream is H.264 with yuv420p pixel format (ffprobe codec_name=h264, pix_fmt=yuv420p)",
+      "passed": true,
+      "evidence": "ffprobe: codec=h264, pix_fmt=yuv420p, 798x798, 30 fps CFR, faststart (programmatic check)"
+    },
+    {
+      "text": "The MP4 has even width and height (yuv420p requirement satisfied in the file itself)",
+      "passed": true,
+      "evidence": "798x798 (programmatic check)"
+    },
+    {
+      "text": "The MP4 duration is between 4 and 20 seconds",
+      "passed": true,
+      "evidence": "8.5 s (programmatic check)"
+    },
+    {
+      "text": "The video actually animates: a frame extracted at 25% of the timeline differs from one at 75%",
+      "passed": true,
+      "evidence": "frame hashes differ (programmatic check); agent verified smooth bend progression across all 40 frames"
+    },
+    {
+      "text": "A PNG deliverable exists at 2000+ pixels on its long side showing the peptide cartoon",
+      "passed": true,
+      "evidence": "md_traj_midframe_300dpi.png, 2494x2494 RGBA, mid-trajectory frame 20/40 (programmatic check + agent visual)"
+    }
+  ],
+  "notes": "Baseline again succeeded at higher discovery cost, independently rediscovering the animationSpeed mechanism (confirms e2-with's gap finding) plus extra renderer facts: setFrame(i), renderer.isTransparent + backgroundColor for opaque video, startRecording records from current frame at max(50, animationSpeed) ms/frame. All queued for the improvement pass.",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "eval_id": 0,
+  "eval_name": "publication-still",
+  "prompt": "I'm preparing slides for a talk on host-pathogen interactions. Make me a publication-quality 2D figure of the SARS-CoV-2 RBD in complex with human ACE2 (PDB entry 6MRR): the hand-drawn Richardson-style cartoon look, each chain in a different color. I need a transparent 300-dpi PNG I can drop onto a slide, plus an SVG version of the same figure.",
+  "assertions": [
+    "A PNG deliverable exists and is at least 2000x2000 pixels (300-dpi render scale)",
+    "The PNG has an alpha channel (RGBA), i.e. transparent background",
+    "An SVG deliverable exists and is non-trivial (>10 KB of vector content)",
+    "The figure depicts 6MRR as a secondary-structure cartoon (ribbon helices / arrowed strands), not a plain backbone line trace",
+    "The two chains (RBD and ACE2) are visibly distinguished by different colors"
+  ]
+}

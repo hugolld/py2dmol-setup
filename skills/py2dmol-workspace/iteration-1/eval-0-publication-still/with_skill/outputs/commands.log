@@ -1,0 +1,25 @@
+# All shell commands run to produce the deliverables in this directory
+# (skill scripts at /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts; scratch dir /tmp/py2dmol-6mrr)
+
+# 1. Set up outputs + scratch directories; confirm skill scripts present
+mkdir -p /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-1/eval-0-publication-still/with_skill/outputs /tmp/py2dmol-6mrr && ls /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/
+
+# 2. Build self-contained viewer HTML (fetches 6MRR from RCSB; cartoon/richardson style, chain coloring, 800x800)
+cd /tmp/py2dmol-6mrr && uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/render.py --pdb 6MRR --style cartoon --color chain --size 800 800 -o viewer.html
+
+# 3. Export transparent 300-dpi PNG (dpi defaults to 300) -> 2494x2494, 2.51 MB
+cd /tmp/py2dmol-6mrr && uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/export.py viewer.html -o /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-1/eval-0-publication-still/with_skill/outputs/6mrr_rbd_ace2_cartoon.png
+
+# 4. Export SVG vector version of the same figure
+cd /tmp/py2dmol-6mrr && uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol/scripts/export.py viewer.html -o /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-1/eval-0-publication-still/with_skill/outputs/6mrr_rbd_ace2_cartoon.svg
+
+# 5. Verification: PNG is 2494x2494 RGBA (colortype 6 = alpha channel present, transparent background); SVG header sanity check
+cd /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-1/eval-0-publication-still/with_skill/outputs && python3 -c "
+import struct
+with open('6mrr_rbd_ace2_cartoon.png','rb') as f: d=f.read()
+w,h = struct.unpack('>II', d[16:24])
+bitdepth, colortype = d[24], d[25]
+print(f'PNG {w}x{h} bitdepth={bitdepth} colortype={colortype} (6 = RGBA)')
+" && head -c 300 6mrr_rbd_ace2_cartoon.svg
+
+# 6. Verification: visual inspection of the PNG (rendered image reviewed — Richardson cartoon style, ACE2/blue + RBD/red chain colors, transparent background)

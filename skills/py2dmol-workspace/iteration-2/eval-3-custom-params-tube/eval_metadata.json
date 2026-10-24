@@ -1,0 +1,11 @@
+{
+  "eval_id": 3,
+  "eval_name": "custom-params-tube",
+  "prompt": "For a methods talk I want a cleaner look at the topology of PDB entry 6MRR (SARS-CoV-2 RBD in complex with ACE2): render it as a tube-style 2D trace with thicker strokes (line width around 2.5) and full outlines. A transparent 300-dpi PNG please. Keep any intermediate files you generate along the way \u2014 I like to re-export at other sizes later.",
+  "assertions": [
+    "A PNG deliverable exists with its long side at least 2000 pixels and an alpha channel (RGBA)",
+    "The structure is rendered in tube style (continuous backbone trace), not cartoon ribbons/arrowed strands",
+    "If a viewer HTML artifact is present in outputs, its embedded py2dmol config pins style \"tube\" and width 2.5 (the custom parameters flowed through)",
+    "The requested custom look is honored rather than the publication default: strokes visibly heavier than a stock tube render, or the config width value as programmatic evidence"
+  ]
+}

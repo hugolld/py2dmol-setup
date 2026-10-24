@@ -1,0 +1,17 @@
+[
+ {
+  "text": "PNG at least 2000x2000 pixels",
+  "passed": true,
+  "evidence": "2494x2494"
+ },
+ {
+  "text": "PNG has alpha channel (RGBA)",
+  "passed": true,
+  "evidence": "color_type=6"
+ },
+ {
+  "text": "SVG exists and is non-trivial (>10 KB)",
+  "passed": true,
+  "evidence": "121472 bytes"
+ }
+]

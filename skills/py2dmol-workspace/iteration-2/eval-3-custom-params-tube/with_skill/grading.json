@@ -1,0 +1,27 @@
+{
+  "run_id": "eval-3-with_skill",
+  "expectations": [
+    {
+      "text": "A PNG deliverable exists with its long side at least 2000 pixels and an alpha channel (RGBA)",
+      "passed": true,
+      "evidence": "2494x2494; color_type=6 (RGBA)"
+    },
+    {
+      "text": "The structure is rendered in tube style (continuous backbone trace), not cartoon ribbons/arrowed strands",
+      "passed": true,
+      "evidence": "Viewed 6mrr_tube.png: both chains drawn as continuous rounded backbone traces — helices appear as smooth tube spirals with no flat ribbon coils and the beta regions show no arrowheads (directly comparable to eval-0's cartoon render of the same entry, which does show them)."
+    },
+    {
+      "text": "If a viewer HTML artifact is present in outputs, its embedded py2dmol config pins style \"tube\" and width 2.5 (the custom parameters flowed through)",
+      "passed": true,
+      "evidence": "style='tube'; width=2.5"
+    },
+    {
+      "text": "The requested custom look is honored rather than the publication default: strokes visibly heavier than a stock tube render, or the config width value as programmatic evidence",
+      "passed": true,
+      "evidence": "Both prongs verified: viewer HTML pins width=2.5 with `--style tube --width 2.5 --outline full` in commands.log (programmatic: width=2.5), and the PNG corroborates visually — backbone strokes are bold, heavily-built bands with full outline treatment, clearly heavier than a stock hairline tube trace."
+    }
+  ],
+  "summary": {"pass_rate": 1.0, "passed": 4, "failed": 0, "total": 4},
+  "notes": "The new styling flags map 1:1 onto the user's request in a single render.py call (`--style tube --width 2.5 --outline full`) — no spec file needed, and intermediate viewer.html was kept as the user asked. The runner also verified alpha coverage with a Pillow histogram (transparent vs opaque pixel counts)."
+}

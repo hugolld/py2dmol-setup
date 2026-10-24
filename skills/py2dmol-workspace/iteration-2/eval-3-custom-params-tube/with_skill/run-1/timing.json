@@ -1,0 +1,5 @@
+{
+ "total_duration_seconds": 461.7,
+ "total_tokens": 0,
+ "method": "outputs mtime span (first artifact -> last artifact); underestimates by SKILL.md read + reasoning time. tokens not captured this round."
+}

@@ -1,0 +1,37 @@
+{
+  "run_id": "eval-0-without_skill",
+  "expectations": [
+    {
+      "text": "A PNG deliverable exists and is at least 2000x2000 pixels (300-dpi render scale)",
+      "passed": true,
+      "evidence": "6mrr_richardson_chain_300dpi.png, 2181x2181 (programmatic check)"
+    },
+    {
+      "text": "The PNG has an alpha channel (RGBA), i.e. transparent background",
+      "passed": true,
+      "evidence": "PNG color_type=6 RGBA (programmatic check)"
+    },
+    {
+      "text": "An SVG deliverable exists and is non-trivial (>10 KB of vector content)",
+      "passed": true,
+      "evidence": "6mrr_richardson_chain.svg, 121931 bytes (programmatic check)"
+    },
+    {
+      "text": "The figure depicts 6MRR as a secondary-structure cartoon (ribbon helices / arrowed strands), not a plain backbone line trace",
+      "passed": true,
+      "evidence": "Visual inspection: Richardson cartoon \u2014 flat wide helices, arrowed strands, inked outlines, pencil grain"
+    },
+    {
+      "text": "The two chains (RBD and ACE2) are visibly distinguished by different colors",
+      "passed": true,
+      "evidence": "Visual inspection: ACE2 teal vs RBD magenta, distinct at the interface"
+    }
+  ],
+  "notes": "Baseline succeeded but only after rediscovering everything the skill encodes: found PyPI 1.6.5 lacks cartoon style, switched to git main, reverse-engineered the _display_viewer -> Playwright -> renderer.saveImage pipeline. ~10 shell commands, ~15 min, most of it API discovery (per agent's own log). Also reported saveImage clamps dpi to [36,1200] \u2014 queued for references. Quality equal to with-skill run; cost much higher.",
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 5,
+    "failed": 0,
+    "total": 5
+  }
+}

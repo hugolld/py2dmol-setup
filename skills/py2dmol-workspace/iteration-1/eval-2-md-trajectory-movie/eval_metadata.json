@@ -1,0 +1,13 @@
+{
+  "eval_id": 2,
+  "eval_name": "md-trajectory-movie",
+  "prompt": "Here's a multi-model MD trajectory of a helical peptide. Turn it into an ~8-second MP4 (H.264, has to play in PowerPoint) showing the trajectory playing as a rainbow-colored cartoon, and also export one 300-dpi PNG of a representative frame from the middle of the trajectory.",
+  "assertions": [
+    "An MP4 deliverable exists, larger than 100 KB",
+    "The MP4 video stream is H.264 with yuv420p pixel format (ffprobe codec_name=h264, pix_fmt=yuv420p)",
+    "The MP4 has even width and height (yuv420p requirement satisfied in the file itself)",
+    "The MP4 duration is between 4 and 20 seconds",
+    "The video actually animates: a frame extracted at 25% of the timeline differs from one at 75%",
+    "A PNG deliverable exists at 2000+ pixels on its long side showing the peptide cartoon"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "run_id": "eval-0-with_skill",
+  "expectations": [
+    {
+      "text": "A PNG deliverable exists and is at least 2000x2000 pixels (300-dpi render scale)",
+      "passed": true,
+      "evidence": "6mrr.png measured 2494x2494 (programmatic: \"2494x2494\")"
+    },
+    {
+      "text": "The PNG has an alpha channel (RGBA), i.e. transparent background",
+      "passed": true,
+      "evidence": "color_type=6 (RGBA)"
+    },
+    {
+      "text": "An SVG deliverable exists and is non-trivial (>10 KB of vector content)",
+      "passed": true,
+      "evidence": "121472 bytes"
+    },
+    {
+      "text": "Despite no style being requested, the figure is a secondary-structure cartoon (ribbon helices / arrowed strands), not a plain line trace — the publication default was applied",
+      "passed": true,
+      "evidence": "Viewed 6mrr.png: ACE2 rendered as flat ribbon helix coils (lower spiral bundle) and the RBD beta-sheet with clear arrowhead strands (upper half) — a secondary-structure cartoon, not a line trace. commands.log shows render.py was invoked with a bare `--pdb 6MRR` (no style flag), so the cartoon came from the skill's publication default."
+    },
+    {
+      "text": "The two chains (RBD and ACE2) are visibly distinguished by different colors (default chain coloring)",
+      "passed": true,
+      "evidence": "Viewed 6mrr.png: RBD chain in tan/sandy yellow vs ACE2 chain in steel blue — two clearly distinct chain colors on the two-chain complex."
+    }
+  ],
+  "summary": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5},
+  "notes": "Runner invoked render.py with a bare `--pdb 6MRR` — no style or color flags — and the publication defaults (cartoon + chain coloring) came through in the render, exactly the default-first behavior this eval targets. The PNG/SVG are visually indistinguishable from the old-skill run, which needed explicit `--style cartoon --color chain` to reach the same result."
+}

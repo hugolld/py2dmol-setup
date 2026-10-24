@@ -1,0 +1,12 @@
+{
+  "viewer": {
+    "size": [800, 800],
+    "style": "cartoon",
+    "preset": "ribbon",
+    "color": "rainbow",
+    "autoplay": true
+  },
+  "load": [
+    { "type": "file", "path": "/Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/input/md_traj.pdb", "name": "md_traj" }
+  ]
+}

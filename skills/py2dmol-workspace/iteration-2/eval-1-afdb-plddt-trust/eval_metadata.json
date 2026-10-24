@@ -1,0 +1,13 @@
+{
+  "eval_id": 1,
+  "eval_name": "afdb-plddt-trust",
+  "prompt": "I have the AlphaFold model for UniProt Q5VSL9 and want to judge which regions to trust before designing experiments. Render it as a 2D cartoon colored by pLDDT with the PAE matrix shown alongside, exported as a 300-dpi PNG. Then tell me briefly which regions look confidently folded and which look like low-confidence/disordered segments.",
+  "assertions": [
+    "A PNG deliverable exists with its long side at least 2000 pixels (300-dpi render scale)",
+    "The image is wider than tall (PAE matrix panel rendered alongside the structure, aspect ratio > 1.3)",
+    "The structure is colored by pLDDT confidence (blue-to-yellow/orange gradient over the chain), not by chain or rainbow position colors",
+    "A PAE matrix heat-map panel is visible in the image",
+    "interpretation.md exists and cites specific regions (residue numbers or domain/range descriptions) as high- vs low-confidence",
+    "interpretation.md identifies at least one low-confidence/disordered segment"
+  ]
+}

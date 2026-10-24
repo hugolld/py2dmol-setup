@@ -1,0 +1,6 @@
+# Commands run to produce the deliverables (cwd = this outputs directory)
+# spec.json was authored with an editor (not a shell command): viewer = tube, chain color, width 2.5, outline full, size 800x800; load = pdb 6MRR
+mkdir -p /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/iteration-2/eval-3-custom-params-tube/old_skill/outputs
+uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/skill-snapshot/scripts/render.py spec.json -o viewer.html
+uv run /Users/hugodong/Desktop/py2dmol-setup/skills/py2dmol-workspace/skill-snapshot/scripts/export.py viewer.html -o 6mrr_tube_w2.5_outline.png
+file 6mrr_tube_w2.5_outline.png && sips -g pixelWidth -g pixelHeight -g hasAlpha 6mrr_tube_w2.5_outline.png && python3 -c "from PIL import Image; im = Image.open('6mrr_tube_w2.5_outline.png'); a = im.getchannel('A'); print('mode:', im.mode); print('alpha min/max:', a.getextrema()); print('fully transparent px:', sum(1 for p in a.getdata() if p == 0))"
